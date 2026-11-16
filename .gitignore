@@ -1,0 +1,29 @@
+# Local configuration (contains API keys / server URLs)
+config.yaml
+
+# Data that cannot be redistributed or is derived from the Sharma et al. (2020) corpus
+data/raw/*
+data/processed/*
+data/retrieval/*
+data/prompts/*
+!data/**/.gitkeep
+
+# Generated outputs (contain Reddit text)
+outputs/*
+!outputs/.gitkeep
+
+# ColBERT / RAGatouille index
+.ragatouille/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

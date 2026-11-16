@@ -1,0 +1,13 @@
+# Copy this file to config.yaml (which is git-ignored) and fill in your values.
+# The scripts talk to any OpenAI-compatible endpoint, e.g. a local vLLM server:
+#   vllm serve Qwen/Qwen3-8B --port 8000
+
+# API key expected by the inference server ("EMPTY" for an unauthenticated vLLM server).
+api_key: "EMPTY"
+
+# Base URL of the OpenAI-compatible API.
+base_url: "http://localhost:8000/v1/"
+
+# Optional prefix prepended to the model name (e.g. a local model directory used by
+# the server as the model identifier). Leave empty to use the Hugging Face name.
+path_model: ""
