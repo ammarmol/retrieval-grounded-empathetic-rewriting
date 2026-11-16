@@ -109,14 +109,6 @@ The No-RAG prompt does not depend on k, so a single No-RAG run per model is enou
 | Wilcoxon tests, Cliff's δ, and bootstrap 95% CIs | `07_human_eval_stats.py` |
 | LLM-as-judge agreement with human labels | `08_llm_judge.py` |
 | Figures: empathy components, NLG metrics, human judgements | `09_plot_figures.py` |
-
-<!-- TODO(authors): add the empathy classifier code before release, or keep this note. -->
-### Not included in this repository
-
-- Training and inference of the three empathy classifiers (emotional reactions,
-  interpretations, explorations) used for the automatic empathy scores and Figure 2,
-  which follow Sharma et al. (2020).
-
 ## Human annotations
 
 `data/human_annotations/human_annotations_100.csv` contains, for each of the 100
@@ -133,8 +125,7 @@ not included.
   author    = {M{\'a}rmol-Romero, Alba Mar{\'i}a and Ecevit, Isin Su and Bucur, Ana-Maria and
                Montejo-R{\'a}ez, Arturo and Crestani, Fabio},
   booktitle = {Proceedings of the 2027 Conference of the European Chapter of the Association for Computational Linguistics},
-  year      = {2027},
-  note      = {TODO: add pages and URL once the proceedings are published}
+  year      = {2027}
 }
 ```
 
