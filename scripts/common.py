@@ -15,6 +15,7 @@ PROCESSED_DIR = DATA_DIR / "processed"  # learning / evaluation sets built from 
 SPLITS_DIR = DATA_DIR / "splits"        # released ID lists defining our splits
 RETRIEVAL_DIR = DATA_DIR / "retrieval"
 PROMPTS_DIR = DATA_DIR / "prompts"
+RELEASED_GENERATIONS_DIR = DATA_DIR / "generations"  # model outputs used in the paper (released)
 OUTPUTS_DIR = ROOT / "outputs"
 GENERATIONS_DIR = OUTPUTS_DIR / "generations"
 RESULTS_DIR = OUTPUTS_DIR / "results"

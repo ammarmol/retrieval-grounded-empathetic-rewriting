@@ -8,8 +8,8 @@ Cohen's kappa. The run is resumable.
 
 Example:
     python scripts/08_llm_judge.py --judge_model google/gemma-4-31b-it \
-        --no_rag_csv outputs/generations/qwen3-8b_prompts_colbert_top20_no_rag.csv \
-        --rag_csv    outputs/generations/qwen3-8b_prompts_colbert_top20_rag.csv
+        --no_rag_csv data/generations/qwen3-8b_no_rag.csv \
+        --rag_csv    data/generations/qwen3-8b_k20_rag.csv
 
 Output:
     outputs/results/judge_validation_{judge}.csv  (one row per instance x condition)

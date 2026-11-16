@@ -1,6 +1,6 @@
 # Human Examples Are Not Enough: Limits of Retrieval Grounding for Safe Empathetic Rewriting
 
-Code, prompts, data splits, and human annotations for the EACL 2027 paper
+Code, prompts, data splits, model rewrites, and human annotations for the EACL 2027 paper
 *Human Examples Are Not Enough: Limits of Retrieval Grounding for Safe Empathetic Rewriting*.
 
 We study whether grounding an LLM rewriter in **retrieved human-authored empathetic
@@ -32,6 +32,7 @@ edits, or rejects the suggestion.
 ├── data/
 │   ├── README.md              # how to obtain the corpus (not redistributed)
 │   ├── splits/                # learning / evaluation IDs and toxicity flags
+│   ├── generations/           # model rewrites + explanations, 4 models x 5 configurations
 │   └── human_annotations/     # human evaluation (vote counts per instance)
 └── docs/
     └── annotation_guidelines.md
@@ -79,7 +80,9 @@ for p in prompts_colbert_top5 prompts_colbert_top10 prompts_colbert_top20 prompt
   python scripts/04_generate_rewrites.py --model $MODEL --prompts $p --rag
 done
 
-# 5. Fidelity and diversity metrics (BERTScore and SAS benefit from a GPU)
+# 5. Fidelity and diversity metrics (BERTScore and SAS benefit from a GPU).
+#    By default steps 5 and 6 analyse the released rewrites in data/generations/;
+#    pass --generations_dir outputs/generations to analyse your own runs.
 python scripts/05_nlg_metrics.py
 
 # 6. Lexical analysis of all generations
@@ -90,8 +93,8 @@ python scripts/07_human_eval_stats.py
 
 # 8. LLM-as-judge validation
 python scripts/08_llm_judge.py --judge_model google/gemma-4-31b-it \
-  --no_rag_csv outputs/generations/qwen3-8b_prompts_colbert_top20_no_rag.csv \
-  --rag_csv    outputs/generations/qwen3-8b_prompts_colbert_top20_rag.csv
+  --no_rag_csv data/generations/qwen3-8b_no_rag.csv \
+  --rag_csv    data/generations/qwen3-8b_k20_rag.csv
 ```
 
 The No-RAG prompt does not depend on k, so a single No-RAG run per model is enough.
@@ -113,9 +116,11 @@ The No-RAG prompt does not depend on k, so a single No-RAG run per model is enou
 
 `data/human_annotations/human_annotations_100.csv` contains, for each of the 100
 evaluated instances, the number of annotators (out of 3) who marked each dimension as
-present for the Original, No-RAG, and RAG responses. The guidelines are in
-[`docs/annotation_guidelines.md`](docs/annotation_guidelines.md). Annotator identities are
-not included.
+present for the Original, No-RAG, and RAG responses. The annotated rewrites are released in
+`data/generations/qwen3-8b_no_rag.csv` and `data/generations/qwen3-8b_k20_rag.csv`
+(join on `id_query`); the original responses come from the Sharma et al. (2020) corpus.
+The guidelines are in [`docs/annotation_guidelines.md`](docs/annotation_guidelines.md).
+Annotator identities are not included.
 
 ## Citation
 

@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from common import GENERATIONS_DIR, PROCESSED_DIR, RATIONALE_COLUMNS, RESULTS_DIR, ensure_dirs
+from common import PROCESSED_DIR, RATIONALE_COLUMNS, RELEASED_GENERATIONS_DIR, RESULTS_DIR, ensure_dirs
 
 NLE_TERMS = ["emotional", "exploration", "interpretation"]
 
@@ -70,7 +70,8 @@ def analyse_file(path: Path, reference: dict) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--generations_dir", default=str(GENERATIONS_DIR))
+    parser.add_argument("--generations_dir", default=str(RELEASED_GENERATIONS_DIR),
+                        help="Default: the released generations; use outputs/generations for your own runs.")
     parser.add_argument("--evaluation_csv", default=str(PROCESSED_DIR / "evaluation.csv"))
     parser.add_argument("--output", default=str(RESULTS_DIR / "lexical_analysis.csv"))
     args = parser.parse_args()

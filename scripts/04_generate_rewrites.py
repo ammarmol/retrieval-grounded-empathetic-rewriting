@@ -11,8 +11,10 @@ Examples:
     python scripts/04_generate_rewrites.py --model Qwen/Qwen3-8B --prompts prompts_colbert_top20 --rag
     python scripts/04_generate_rewrites.py --model Qwen/Qwen3-8B --prompts prompts_colbert_top20
 
-Output:
-    outputs/generations/{model}_{prompts}_{rag|no_rag}.csv
+Output (same naming as the released files in data/generations/):
+    outputs/generations/{model}_no_rag.csv
+    outputs/generations/{model}_k{k}_rag.csv            (prompts_colbert_top{k})
+    outputs/generations/{model}_k{k}_no_rerank_rag.csv  (prompts_colbert_top{k}_no_rerank)
     columns: id_query, query, original_response, empathic_response_rewritten, suggested_changes
 """
 
@@ -62,8 +64,13 @@ def main():
     prompts = pd.read_csv(PROMPTS_DIR / f"{args.prompts}.csv")
 
     ensure_dirs(GENERATIONS_DIR)
-    condition = "rag" if args.rag else "no_rag"
-    out_path = GENERATIONS_DIR / f"{short_model_name(args.model)}_{args.prompts}_{condition}.csv"
+    if args.rag:
+        # prompts_colbert_top20 -> k20 ; prompts_colbert_top3_no_rerank -> k3_no_rerank
+        config_tag = re.sub(r"^prompts_colbert_top(\d+)", r"k\1", args.prompts)
+        out_name = f"{short_model_name(args.model)}_{config_tag}_rag.csv"
+    else:
+        out_name = f"{short_model_name(args.model)}_no_rag.csv"  # the No-RAG prompt does not depend on k
+    out_path = GENERATIONS_DIR / out_name
 
     # Resume: keep only complete rows from a previous run.
     if out_path.exists():

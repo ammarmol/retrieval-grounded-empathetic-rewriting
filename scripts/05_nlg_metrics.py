@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from common import GENERATIONS_DIR, RESULTS_DIR, ensure_dirs
+from common import PROCESSED_DIR, RELEASED_GENERATIONS_DIR, RESULTS_DIR, ensure_dirs
 
 ALL_METRICS = ["bleu", "meteor", "rouge", "bertscore", "sas", "distinct"]
 
@@ -58,8 +58,11 @@ class Scorers:
             from sentence_transformers import SentenceTransformer
             self.sas_model = SentenceTransformer("roberta-large-nli-stsb-mean-tokens", device=device)
 
-    def score_file(self, path: Path) -> dict:
-        df = pd.read_csv(path).dropna(subset=["empathic_response_rewritten", "original_response"])
+    def score_file(self, path: Path, originals: pd.Series) -> dict:
+        df = pd.read_csv(path)
+        if "original_response" not in df.columns:  # released files contain model outputs only
+            df["original_response"] = df["id_query"].map(originals)
+        df = df.dropna(subset=["empathic_response_rewritten", "original_response"])
         refs = df["original_response"].astype(str).tolist()
         hyps = df["empathic_response_rewritten"].astype(str).tolist()
         out = {"file": path.stem, "n": len(df)}
@@ -88,7 +91,9 @@ class Scorers:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--generations_dir", default=str(GENERATIONS_DIR))
+    parser.add_argument("--generations_dir", default=str(RELEASED_GENERATIONS_DIR),
+                        help="Default: the released generations; use outputs/generations for your own runs.")
+    parser.add_argument("--evaluation_csv", default=str(PROCESSED_DIR / "evaluation.csv"))
     parser.add_argument("--metrics", nargs="+", default=ALL_METRICS, choices=ALL_METRICS)
     parser.add_argument("--device", default=None, help="e.g. cuda, cpu (default: automatic)")
     parser.add_argument("--output", default=str(RESULTS_DIR / "nlg_metrics.csv"))
@@ -98,11 +103,12 @@ def main():
     if not files:
         raise FileNotFoundError(f"No generation files found in {args.generations_dir}")
 
+    originals = pd.read_csv(args.evaluation_csv).set_index("id_query")["response_post"]
     scorers = Scorers(args.metrics, args.device)
     rows = []
     for f in files:
         print(f"Scoring {f.name}")
-        rows.append(scorers.score_file(f))
+        rows.append(scorers.score_file(f, originals))
     results = pd.DataFrame(rows)
 
     ensure_dirs(Path(args.output).parent)
